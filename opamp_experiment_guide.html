@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPアンプ実験ガイド</title>
+<style>
+  :root {
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #378ADD;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --amber-mid: #BA7517;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --coral-mid: #D85A30;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --gray-100: #F1EFE8;
+    --gray-400: #888780;
+    --gray-700: #444441;
+    --gray-900: #2C2C2A;
+    --text: #2C2C2A;
+    --text-muted: #5F5E5A;
+    --bg: #ffffff;
+    --bg2: #F1EFE8;
+    --border: rgba(44,44,42,0.15);
+    --border2: rgba(44,44,42,0.3);
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #e8e6de;
+      --text-muted: #9c9a92;
+      --bg: #1e1e1c;
+      --bg2: #2a2a28;
+      --border: rgba(232,230,222,0.12);
+      --border2: rgba(232,230,222,0.25);
+      --blue-light: #042C53;
+      --teal-light: #04342C;
+      --amber-light: #412402;
+      --coral-light: #4A1B0C;
+      --purple-light: #26215C;
+      --gray-100: #2C2C2A;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    border-bottom: 0.5px solid var(--border2);
+    margin-bottom: 2.5rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .toc a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    transition: border-color 0.15s;
+  }
+  .toc a:hover { border-color: var(--border2); }
+  .toc-num {
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 500;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Section headers */
+  .section {
+    margin-bottom: 3rem;
+  }
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  h2.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.5rem 0 0.75rem;
+  }
+  p { margin-bottom: 1rem; color: var(--text); }
+
+  /* Info boxes */
+  .info-box {
+    border-left: 3px solid;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+  .info-box.blue { border-color: var(--blue-mid); background: var(--blue-light); }
+  .info-box.amber { border-color: var(--amber-mid); background: var(--amber-light); }
+  .info-box.coral { border-color: var(--coral-mid); background: var(--coral-light); }
+  .info-box.teal { border-color: var(--teal-mid); background: var(--teal-light); }
+  .info-box .label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .info-box.blue .label { color: var(--blue); }
+  .info-box.amber .label { color: var(--amber); }
+  .info-box.coral .label { color: var(--coral); }
+  .info-box.teal .label { color: var(--teal); }
+  .info-box p { margin: 0; font-size: 14px; }
+
+  /* Cards */
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-value { font-size: 1.25rem; font-weight: 600; color: var(--text); }
+
+  /* Step list */
+  .steps {
+    list-style: none;
+    margin: 1rem 0;
+  }
+  .steps li {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 15px;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Pin table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 1rem 0;
+  }
+  th {
+    background: var(--bg2);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 500;
+    font-size: 13px;
+    border-bottom: 0.5px solid var(--border2);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-coral { background: var(--coral-light); color: var(--coral); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-700); }
+
+  /* Circuit diagrams */
+  .circuit-wrapper {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+  }
+  .circuit-wrapper svg { display: block; margin: 0 auto; }
+  .circuit-caption {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  /* Experiment header */
+  .exp-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .exp-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  /* Formula box */
+  .formula {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    color: var(--text);
+    text-align: center;
+  }
+  .formula-label {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-align: center;
+    font-style: normal;
+  }
+
+  /* Divider */
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 2.5rem 0; }
+
+  /* Summary chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.75rem 0; }
+  .chip {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* Warning */
+  .warning {
+    background: var(--coral-light);
+    border: 0.5px solid var(--coral-mid);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+  .warning strong { color: var(--coral); }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem; }
+    .hero h1 { font-size: 1.5rem; }
+    .toc-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">物理学実験 — 応用編</div>
+  <h1>OPアンプ実験 完全ガイド</h1>
+  <p>初学者でもわかる回路の組み方・測定方法・解析のポイントを網羅しています</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>目次</h2>
+  <div class="toc-grid">
+    <a href="#basics"><div class="toc-num">1</div>OPアンプの基礎</a>
+    <a href="#prep"><div class="toc-num">2</div>回路の準備</a>
+    <a href="#exp1"><div class="toc-num">3</div>実験1 反転増幅</a>
+    <a href="#exp2"><div class="toc-num">4</div>実験2 非反転増幅</a>
+    <a href="#exp3"><div class="toc-num">5</div>実験3 加算回路</a>
+    <a href="#exp4"><div class="toc-num">6</div>実験4 理想整流器</a>
+    <a href="#week2"><div class="toc-num">7</div>2週目 交流回路</a>
+    <a href="#cleanup"><div class="toc-num">8</div>片付け</a>
+  </div>
+</div>
+
+<!-- Section 1: Basics -->
+<div class="section" id="basics">
+  <span class="section-label">Section 01</span>
+  <h2 class="section-title">OPアンプの基礎知識</h2>
+
+  <p>OPアンプ（演算増幅器、Operational Amplifier）は、2つの入力端子と1つの出力端子を持つ集積回路（IC）です。今回の実験では <strong>LM301A</strong> という8ピンのICを使用します。</p>
+
+  <div class="info-box blue">
+    <div class="label">ポイント</div>
+    <p>OPアンプ単体では使えません。必ず <strong>±12Vの電源</strong> を接続して動作させます。また、実際の回路では「負帰還（フィードバック）」をかけることで安定した増幅器として機能します。</p>
+  </div>
+
+  <h3>LM301A のピン配置</h3>
+
+  <!-- Pin table -->
+  <table>
+    <thead>
+      <tr><th>ピン番号</th><th>名称</th><th>役割</th><th>接続先</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1, 5</td><td>Balance（オフセット調整）</td><td>出力オフセットのゼロ調整に使う</td><td><span class="badge badge-amber">可変抵抗 / 今回は未接続</span></td></tr>
+      <tr><td>2</td><td>反転入力（−）</td><td>ここに入れた信号は出力で符号が反転する</td><td><span class="badge badge-blue">入力信号 / 帰還抵抗</span></td></tr>
+      <tr><td>3</td><td>非反転入力（+）</td><td>ここに入れた信号は同符号で増幅される</td><td><span class="badge badge-blue">入力信号 / GND</span></td></tr>
+      <tr><td>4</td><td>−VCC</td><td>負の電源端子</td><td><span class="badge badge-coral">−12V</span></td></tr>
+      <tr><td>6</td><td>出力</td><td>増幅された電圧が出る</td><td><span class="badge badge-teal">OUT 端子</span></td></tr>
+      <tr><td>7</td><td>+VCC</td><td>正の電源端子</td><td><span class="badge badge-coral">+12V</span></td></tr>
+      <tr><td>8</td><td>Compensation 2</td><td>位相補償コンデンサ用（基板に実装済み）</td><td><span class="badge badge-gray">30µF コンデンサ</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>ICの向きの見分け方</h3>
+  <div class="info-box teal">
+    <div class="label">重要</div>
+    <p>LM301A の表面には小さな <strong>半円のくぼみ（ノッチ）</strong> があります。このくぼみを左側に向けたとき、<strong>左下がピン1</strong> となり、反時計回りにピン2〜8と続きます。データシートの図と見比べて向きを確認してください。</p>
+  </div>
+
+  <!-- IC diagram SVG -->
+  <div class="circuit-wrapper">
+    <svg width="400" height="200" viewBox="0 0 400 200">
+      <!-- IC body -->
+      <rect x="120" y="30" width="160" height="140" rx="8" fill="none" stroke="#444" stroke-width="1.5"/>
+      <!-- Notch -->
+      <path d="M185 30 A15 15 0 0 1 215 30" fill="none" stroke="#444" stroke-width="1.5"/>
+      <!-- IC label -->
+      <text x="200" y="108" text-anchor="middle" font-size="13" font-weight="600" fill="#444">LM301A</text>
+      <text x="200" y="128" text-anchor="middle" font-size="10" fill="#888">(top view)</text>
+
+      <!-- Left pins 1-4 (bottom to top from notch-left) -->
+      <!-- Pin 1 -->
+      <line x1="80" y1="50" x2="120" y2="50" stroke="#444" stroke-width="1.2"/>
+      <text x="75" y="54" text-anchor="end" font-size="11" fill="#666">1</text>
+      <text x="128" y="54" font-size="10" fill="#999">Bal/Comp</text>
+      <!-- Pin 2 -->
+      <line x1="80" y1="80" x2="120" y2="80" stroke="#185FA5" stroke-width="1.5"/>
+      <text x="75" y="84" text-anchor="end" font-size="11" fill="#185FA5" font-weight="600">2</text>
+      <text x="128" y="84" font-size="10" fill="#185FA5" font-weight="500">反転入力 (−)</text>
+      <!-- Pin 3 -->
+      <line x1="80" y1="110" x2="120" y2="110" stroke="#185FA5" stroke-width="1.5"/>
+      <text x="75" y="114" text-anchor="end" font-size="11" fill="#185FA5" font-weight="600">3</text>
+      <text x="128" y="114" font-size="10" fill="#185FA5" font-weight="500">非反転入力 (+)</text>
+      <!-- Pin 4 -->
+      <line x1="80" y1="140" x2="120" y2="140" stroke="#993C1D" stroke-width="1.5"/>
+      <text x="75" y="144" text-anchor="end" font-size="11" fill="#993C1D" font-weight="600">4</text>
+      <text x="128" y="144" font-size="10" fill="#993C1D">−VCC (−12V)</text>
+
+      <!-- Right pins 8-5 (top to bottom) -->
+      <!-- Pin 8 -->
+      <line x1="280" y1="50" x2="320" y2="50" stroke="#444" stroke-width="1.2"/>
+      <text x="325" y="54" font-size="11" fill="#666">8</text>
+      <text x="218" y="54" font-size="10" fill="#999">Comp 2</text>
+      <!-- Pin 7 -->
+      <line x1="280" y1="80" x2="320" y2="80" stroke="#993C1D" stroke-width="1.5"/>
+      <text x="325" y="84" font-size="11" fill="#993C1D" font-weight="600">7</text>
+      <text x="218" y="84" font-size="10" fill="#993C1D">+VCC (+12V)</text>
+      <!-- Pin 6 -->
+      <line x1="280" y1="110" x2="320" y2="110" stroke="#0F6E56" stroke-width="1.5"/>
+      <text x="325" y="114" font-size="11" fill="#0F6E56" font-weight="600">6</text>
+      <text x="218" y="114" font-size="10" fill="#0F6E56">出力 (OUT)</text>
+      <!-- Pin 5 -->
+      <line x1="280" y1="140" x2="320" y2="140" stroke="#444" stroke-width="1.2"/>
+      <text x="325" y="144" font-size="11" fill="#666">5</text>
+      <text x="218" y="144" font-size="10" fill="#999">Balance</text>
+
+      <!-- Notch label -->
+      <text x="200" y="22" text-anchor="middle" font-size="10" fill="#888">← くぼみ（ノッチ）</text>
+    </svg>
+    <div class="circuit-caption">図1：LM301A ピン配置（上面図）　くぼみを左に向けて置いたとき、左下＝ピン1</div>
+  </div>
+
+  <h3>理想OPアンプの6条件</h3>
+  <div class="card-grid">
+    <div class="stat-card"><div class="stat-label">増幅度 A</div><div class="stat-value">無限大</div></div>
+    <div class="stat-card"><div class="stat-label">帯域幅</div><div class="stat-value">DC〜∞ Hz</div></div>
+    <div class="stat-card"><div class="stat-label">入力インピーダンス</div><div class="stat-value">無限大</div></div>
+    <div class="stat-card"><div class="stat-label">出力インピーダンス</div><div class="stat-value">0 Ω</div></div>
+    <div class="stat-card"><div class="stat-label">雑音</div><div class="stat-value">なし</div></div>
+    <div class="stat-card"><div class="stat-label">負帰還の安定性</div><div class="stat-value">完全安定</div></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-muted)">実際のLM301Aは上記とは少しずれますが、実験では理想に近い動作をします。</p>
+</div>
+
+<hr>
+
+<!-- Section 2: Prep -->
+<div class="section" id="prep">
+  <span class="section-label">Section 02</span>
+  <h2 class="section-title">実験の準備と安全注意事項</h2>
+
+  <div class="warning">
+    <strong>⚠ 重要な注意事項</strong>：OPアンプの電源スイッチを <strong>必ずOFFにした状態で配線</strong> してください。電源ONのまま配線するとショートしてICが破損します。可変電源や電池も <strong>必ず最後</strong> に接続すること。
+  </div>
+
+  <h3>使用する機器・部品一覧</h3>
+  <table>
+    <thead><tr><th>部品・機器</th><th>仕様</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>回路基板（OPアンプ実装済み）</td><td>LM301A IC搭載</td><td>各実験の回路土台</td></tr>
+      <tr><td>OPアンプ駆動用電源</td><td>±12V出力</td><td>ピン4（−12V）・ピン7（+12V）へ</td></tr>
+      <tr><td>可変電源</td><td>−1.5V〜+1.5V</td><td>実験の入力信号（Vs）</td></tr>
+      <tr><td>乾電池</td><td>1.5V</td><td>実験3の固定電圧源（V2）</td></tr>
+      <tr><td>抵抗 Rs</td><td>10 kΩ</td><td>入力抵抗（実験1〜4）</td></tr>
+      <tr><td>抵抗 Rf</td><td>100 kΩ</td><td>帰還抵抗（全実験）</td></tr>
+      <tr><td>抵抗 R1, R2</td><td>100 kΩ</td><td>加算回路用（実験3）</td></tr>
+      <tr><td>テスター（デジタルマルチメータ）</td><td>Sanwa CD770など</td><td>各点の電圧測定</td></tr>
+      <tr><td>【2週目】ファンクションジェネレーター</td><td>交流信号発生</td><td>交流入力</td></tr>
+      <tr><td>【2週目】オシロスコープ</td><td>Tektronix TBS1052B</td><td>波形観察</td></tr>
+    </tbody>
+  </table>
+
+  <h3>基板の電源接続手順</h3>
+  <ol class="steps">
+    <li><div class="step-num">1</div>OPアンプ電源スイッチが <strong>OFF</strong> であることを確認する</li>
+    <li><div class="step-num">2</div>OPアンプ駆動用電源の +12V 端子 → 基板の <strong>ピン7（+VCC）</strong> へ</li>
+    <li><div class="step-num">3</div>OPアンプ駆動用電源の −12V 端子 → 基板の <strong>ピン4（−VCC）</strong> へ</li>
+    <li><div class="step-num">4</div>0V（GND）を基板の <strong>共通グランド</strong> に接続する</li>
+    <li><div class="step-num">5</div>実験の回路を組み、可変電源・電池は <strong>最後に</strong> 接続する</li>
+    <li><div class="step-num">6</div>配線を再確認してから電源スイッチを ON にする</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- Experiment 1 -->
+<div class="section" id="exp1">
+  <span class="section-label">Section 03</span>
+  <h2 class="section-title">実験1：反転増幅回路</h2>
+
+  <div class="exp-header">
+    <div class="exp-icon" style="background:var(--blue-light); color:var(--blue);">📐</div>
+    <div>
+      <p style="margin:0; font-size:15px;">入力電圧 Vs に対して、出力電圧 Vout が <strong>符号が反転し、一定倍に増幅</strong> されることを確認します。増幅率（ゲイン）は抵抗の比 Rf/Rs で決まります。</p>
+    </div>
+  </div>
+
+  <h3>回路の仕組み（まずここを理解しよう）</h3>
+  <p>OPアンプの「−入力（反転入力）」に信号を入れます。G点という接続点を経由して、出力から入力へ信号を戻す「負帰還」をかけることで、安定した増幅回路になります。</p>
+
+  <div class="info-box blue">
+    <div class="label">イマジナルショート（仮想短絡）</div>
+    <p>理想OPアンプが正常に動いているとき、G点の電圧は常に <strong>0V</strong> になります（アースには繋がっていないのに電位がゼロ）。これを「イマジナルショート」と呼びます。この原理からキルヒホッフの法則を使うと、増幅率が抵抗比 Rf/Rs になることが導けます。</p>
+  </div>
+
+  <h3>回路図</h3>
+  <div class="circuit-wrapper">
+    <svg width="520" height="280" viewBox="0 0 520 280">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- OPアンプ三角形 -->
+      <polygon points="260,100 260,200 360,150" fill="none" stroke="#444" stroke-width="1.5"/>
+      <!-- +/- labels -->
+      <text x="270" y="128" font-size="14" fill="#185FA5" font-weight="600">−</text>
+      <text x="270" y="180" font-size="14" fill="#0F6E56" font-weight="600">+</text>
+      <text x="310" y="155" font-size="12" fill="#888">A</text>
+
+      <!-- VCC lines -->
+      <line x1="295" y1="100" x2="295" y2="70" stroke="#993C1D" stroke-width="1"/>
+      <text x="295" y="62" text-anchor="middle" font-size="10" fill="#993C1D">+12V</text>
+      <line x1="295" y1="200" x2="295" y2="230" stroke="#993C1D" stroke-width="1"/>
+      <text x="295" y="244" text-anchor="middle" font-size="10" fill="#993C1D">−12V</text>
+
+      <!-- Input Rs -->
+      <line x1="30" y1="125" x2="80" y2="125" stroke="#444" stroke-width="1.5"/>
+      <!-- Rs resistor box -->
+      <rect x="80" y="113" width="60" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="110" y="129" text-anchor="middle" font-size="11" fill="#444">Rs = 10kΩ</text>
+      <!-- X point -->
+      <line x1="140" y1="125" x2="165" y2="125" stroke="#444" stroke-width="1.5"/>
+      <circle cx="30" cy="125" r="3" fill="#444"/>
+      <text x="22" y="140" font-size="10" fill="#444">X</text>
+
+      <!-- G point node -->
+      <line x1="165" y1="125" x2="260" y2="125" stroke="#444" stroke-width="1.5"/>
+      <circle cx="190" cy="125" r="4" fill="#185FA5"/>
+      <text x="185" y="118" font-size="11" fill="#185FA5" font-weight="600">G</text>
+
+      <!-- Ri (input impedance) internal -->
+      <line x1="190" y1="125" x2="190" y2="175" stroke="#888" stroke-width="1" stroke-dasharray="4 3"/>
+      <rect x="175" y="150" width="30" height="18" rx="3" fill="none" stroke="#888" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="190" y="163" text-anchor="middle" font-size="9" fill="#888">Ri=∞</text>
+      <line x1="190" y1="175" x2="190" y2="205" stroke="#888" stroke-width="1" stroke-dasharray="4 3"/>
+      <!-- GND for + input -->
+      <line x1="295" y1="175" x2="295" y2="205" stroke="#444" stroke-width="1.5"/>
+      <line x1="285" y1="205" x2="305" y2="205" stroke="#444" stroke-width="1.5"/>
+      <line x1="289" y1="210" x2="301" y2="210" stroke="#444" stroke-width="1.2"/>
+      <line x1="292" y1="215" x2="298" y2="215" stroke="#444" stroke-width="1"/>
+      <text x="295" y="225" text-anchor="middle" font-size="10" fill="#444">GND</text>
+
+      <!-- Rf feedback -->
+      <line x1="190" y1="125" x2="190" y2="60" stroke="#444" stroke-width="1.5"/>
+      <line x1="190" y1="60" x2="400" y2="60" stroke="#444" stroke-width="1.5"/>
+      <!-- Rf resistor box -->
+      <rect x="250" y="48" width="80" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="290" y="64" text-anchor="middle" font-size="11" fill="#444">Rf = 100kΩ</text>
+      <!-- If arrow -->
+      <line x1="230" y1="55" x2="248" y2="55" stroke="#666" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="235" y="47" font-size="9" fill="#666">If →</text>
+
+      <!-- Output line -->
+      <line x1="360" y1="150" x2="400" y2="150" stroke="#0F6E56" stroke-width="1.5"/>
+      <line x1="400" y1="60" x2="400" y2="150" stroke="#444" stroke-width="1.5"/>
+      <circle cx="400" cy="150" r="4" fill="#0F6E56"/>
+      <line x1="400" y1="150" x2="460" y2="150" stroke="#0F6E56" stroke-width="1.5"/>
+      <circle cx="460" cy="150" r="5" fill="none" stroke="#0F6E56" stroke-width="1.5"/>
+      <text x="472" y="154" font-size="12" fill="#0F6E56" font-weight="600">Vout</text>
+      <text x="395" y="145" font-size="10" fill="#0F6E56">Z</text>
+
+      <!-- Vs source -->
+      <line x1="30" y1="125" x2="30" y2="180" stroke="#444" stroke-width="1.5"/>
+      <!-- battery symbol -->
+      <line x1="18" y1="180" x2="42" y2="180" stroke="#444" stroke-width="2"/>
+      <line x1="23" y1="190" x2="37" y2="190" stroke="#444" stroke-width="1.5"/>
+      <text x="-2" y="177" font-size="10" fill="#444">+</text>
+      <line x1="30" y1="190" x2="30" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="215" x2="42" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="22" y1="220" x2="38" y2="220" stroke="#444" stroke-width="1.2"/>
+      <line x1="26" y1="225" x2="34" y2="225" stroke="#444" stroke-width="1"/>
+      <text x="32" y="200" font-size="11" fill="#444" font-weight="600">Vs</text>
+      <text x="32" y="232" text-anchor="middle" font-size="9" fill="#444">GND</text>
+
+      <!-- Labels for measurement points -->
+      <rect x="12" y="100" width="24" height="14" rx="3" fill="var(--blue-light)" stroke="var(--blue-mid)" stroke-width="0.5"/>
+      <text x="24" y="111" text-anchor="middle" font-size="9" fill="var(--blue)">Vs</text>
+      <rect x="450" y="140" width="34" height="14" rx="3" fill="var(--teal-light)" stroke="var(--teal-mid)" stroke-width="0.5"/>
+      <text x="467" y="151" text-anchor="middle" font-size="9" fill="var(--teal)">Vout</text>
+      <rect x="176" y="100" width="24" height="14" rx="3" fill="var(--purple-light)" stroke="var(--purple)" stroke-width="0.5"/>
+      <text x="188" y="111" text-anchor="middle" font-size="9" fill="var(--purple)">VG</text>
+    </svg>
+    <div class="circuit-caption">図2：反転増幅回路　Rs = 10kΩ、Rf = 100kΩ、ゲイン = −10</div>
+  </div>
+
+  <h3>接続手順（初学者向け詳細）</h3>
+  <ol class="steps">
+    <li><div class="step-num">1</div><strong>電源OFFを確認</strong>してから作業開始</li>
+    <li><div class="step-num">2</div>可変電源の <strong>+端子</strong> → Rs（10kΩ）の一端へ接続</li>
+    <li><div class="step-num">3</div>可変電源の <strong>−端子</strong> → GND（共通グランド）へ接続</li>
+    <li><div class="step-num">4</div>Rs のもう一端（X点）→ OPアンプの <strong>−入力（ピン2）</strong> へ接続</li>
+    <li><div class="step-num">5</div>Rf（100kΩ）を OPアンプの <strong>出力（ピン6）</strong> と <strong>−入力（ピン2）</strong> の間に接続（これが負帰還！）</li>
+    <li><div class="step-num">6</div>OPアンプの <strong>+入力（ピン3）</strong> → GND へ接続</li>
+    <li><div class="step-num">7</div>基板上の可変抵抗（オフセット調整用）には <strong>何も接続しない</strong></li>
+  </ol>
+
+  <div class="info-box amber">
+    <div class="label">なぜ負帰還をかけるの？</div>
+    <p>OPアンプの増幅度Aは実際には数万〜数十万倍あります。この状態では少しの入力電圧でも出力が±12Vに張り付いてしまいます。Rfで出力を入力側に戻すことで、見かけの増幅率を <strong>Rf/Rs = 100kΩ/10kΩ = 10倍</strong> に安定させます。</p>
+  </div>
+
+  <h3>測定方法</h3>
+  <div class="chip-row">
+    <div class="chip">テスター3台を同時に使うと効率的</div>
+    <div class="chip">各点とGNDの間に接続する</div>
+  </div>
+  <table>
+    <thead><tr><th>測定点</th><th>テスターのプローブ位置</th><th>備考</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-blue">Vs（X点電圧）</span></td><td>X点 と GND の間</td><td>可変電源の出力電圧</td></tr>
+      <tr><td><span class="badge badge-gray">VG（G点電圧）</span></td><td>G点 と GND の間</td><td>イマジナルショートの確認用</td></tr>
+      <tr><td><span class="badge badge-teal">Vout（OUT点電圧）</span></td><td>OUT点 と GND の間</td><td>増幅された出力電圧</td></tr>
+    </tbody>
+  </table>
+  <p>可変電源を <strong>−1.5V から +1.5V まで 0.1V 刻み</strong> で変化させ、その都度 Vout と VG を記録します。</p>
+
+  <h3>解析のポイント</h3>
+  <div class="info-box teal">
+    <div class="label">確認すること</div>
+    <p>① Vs に対する Vout のグラフが、傾き = −Rf/Rs = <strong>−10</strong> の直線になること<br>
+    ② G点電圧 VG がほぼ <strong>0V</strong> で一定であること（イマジナルショートの実証）<br>
+    ③ Vs が大きくなると出力が <strong>±12V 付近で飽和</strong>（頭打ち）することを確認</p>
+  </div>
+
+  <div class="formula-label">反転増幅の理論式</div>
+  <div class="formula">V<sub>out</sub> / V<sub>s</sub> = −R<sub>f</sub> / R<sub>s</sub> = −100kΩ / 10kΩ = <strong>−10</strong></div>
+</div>
+
+<hr>
+
+<!-- Experiment 2 -->
+<div class="section" id="exp2">
+  <span class="section-label">Section 04</span>
+  <h2 class="section-title">実験2：非反転増幅回路</h2>
+
+  <div class="exp-header">
+    <div class="exp-icon" style="background:var(--teal-light); color:var(--teal);">📈</div>
+    <div>
+      <p style="margin:0; font-size:15px;">信号を <strong>+（非反転）入力</strong> に入れることで、出力が符号反転せず（同符号のまま）増幅されます。増幅率は 1 + Rf/Rs になります。</p>
+    </div>
+  </div>
+
+  <h3>実験1との違い</h3>
+  <p>実験1では可変電源を「−入力側」に入れました。実験2では <strong>入力の場所を入れ替えます</strong>。Rs と GND を直接繋ぎ、可変電源は「+入力側」に移動します。</p>
+
+  <h3>回路図</h3>
+  <div class="circuit-wrapper">
+    <svg width="520" height="280" viewBox="0 0 520 280">
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- OPアンプ -->
+      <polygon points="260,100 260,200 360,150" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="270" y="128" font-size="14" fill="#185FA5" font-weight="600">−</text>
+      <text x="270" y="180" font-size="14" fill="#0F6E56" font-weight="600">+</text>
+
+      <!-- VCC -->
+      <line x1="295" y1="100" x2="295" y2="70" stroke="#993C1D" stroke-width="1"/>
+      <text x="295" y="62" text-anchor="middle" font-size="10" fill="#993C1D">+12V</text>
+      <line x1="295" y1="200" x2="295" y2="230" stroke="#993C1D" stroke-width="1"/>
+      <text x="295" y="244" text-anchor="middle" font-size="10" fill="#993C1D">−12V</text>
+
+      <!-- Rs to GND (X point grounded) -->
+      <line x1="60" y1="125" x2="110" y2="125" stroke="#444" stroke-width="1.5"/>
+      <rect x="110" y="113" width="60" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="140" y="129" text-anchor="middle" font-size="11" fill="#444">Rs=10kΩ</text>
+      <line x1="170" y1="125" x2="220" y2="125" stroke="#444" stroke-width="1.5"/>
+      <!-- GND at X -->
+      <line x1="60" y1="125" x2="60" y2="155" stroke="#444" stroke-width="1.5"/>
+      <line x1="48" y1="155" x2="72" y2="155" stroke="#444" stroke-width="1.5"/>
+      <line x1="52" y1="161" x2="68" y2="161" stroke="#444" stroke-width="1.2"/>
+      <line x1="56" y1="167" x2="64" y2="167" stroke="#444" stroke-width="1"/>
+      <text x="60" y="177" text-anchor="middle" font-size="10" fill="#444">GND</text>
+
+      <!-- G node -->
+      <circle cx="220" cy="125" r="4" fill="#185FA5"/>
+      <text x="215" y="118" font-size="11" fill="#185FA5" font-weight="600">G</text>
+      <line x1="220" y1="125" x2="260" y2="125" stroke="#444" stroke-width="1.5"/>
+
+      <!-- Vs at + input (Y point) -->
+      <line x1="30" y1="175" x2="260" y2="175" stroke="#0F6E56" stroke-width="1.5"/>
+      <circle cx="30" cy="175" r="3" fill="#444"/>
+      <text x="22" y="170" font-size="10" fill="#0F6E56">Y</text>
+      <!-- Vs source -->
+      <line x1="30" y1="175" x2="30" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="215" x2="42" y2="215" stroke="#444" stroke-width="2"/>
+      <line x1="23" y1="225" x2="37" y2="225" stroke="#444" stroke-width="1.5"/>
+      <text x="-2" y="212" font-size="10" fill="#444">+</text>
+      <line x1="30" y1="225" x2="30" y2="248" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="248" x2="42" y2="248" stroke="#444" stroke-width="1.5"/>
+      <line x1="22" y1="253" x2="38" y2="253" stroke="#444" stroke-width="1.2"/>
+      <line x1="26" y1="258" x2="34" y2="258" stroke="#444" stroke-width="1"/>
+      <text x="45" y="232" font-size="11" fill="#0F6E56" font-weight="600">Vs</text>
+
+      <!-- Rf feedback -->
+      <line x1="220" y1="125" x2="220" y2="60" stroke="#444" stroke-width="1.5"/>
+      <line x1="220" y1="60" x2="400" y2="60" stroke="#444" stroke-width="1.5"/>
+      <rect x="270" y="48" width="80" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="310" y="64" text-anchor="middle" font-size="11" fill="#444">Rf=100kΩ</text>
+
+      <!-- Output -->
+      <line x1="360" y1="150" x2="400" y2="150" stroke="#0F6E56" stroke-width="1.5"/>
+      <line x1="400" y1="60" x2="400" y2="150" stroke="#444" stroke-width="1.5"/>
+      <circle cx="400" cy="150" r="4" fill="#0F6E56"/>
+      <line x1="400" y1="150" x2="460" y2="150" stroke="#0F6E56" stroke-width="1.5"/>
+      <circle cx="460" cy="150" r="5" fill="none" stroke="#0F6E56" stroke-width="1.5"/>
+      <text x="472" y="154" font-size="12" fill="#0F6E56" font-weight="600">Vout</text>
+
+      <!-- Measurement labels -->
+      <rect x="14" y="162" width="24" height="14" rx="3" fill="var(--teal-light)" stroke="var(--teal-mid)" stroke-width="0.5"/>
+      <text x="26" y="173" text-anchor="middle" font-size="9" fill="var(--teal)">Vs</text>
+      <rect x="450" y="140" width="34" height="14" rx="3" fill="var(--teal-light)" stroke="var(--teal-mid)" stroke-width="0.5"/>
+      <text x="467" y="151" text-anchor="middle" font-size="9" fill="var(--teal)">Vout</text>
+    </svg>
+    <div class="circuit-caption">図3：非反転増幅回路　Vs を + 入力に入れる　ゲイン = 1 + Rf/Rs = 11</div>
+  </div>
+
+  <h3>接続手順</h3>
+  <ol class="steps">
+    <li><div class="step-num">1</div>実験1の可変電源を外す。Rs（10kΩ）の X点側を <strong>GND に直接接続</strong> する</li>
+    <li><div class="step-num">2</div>可変電源の <strong>+端子</strong> → OPアンプの <strong>+入力（ピン3）</strong> へ</li>
+    <li><div class="step-num">3</div>可変電源の <strong>−端子</strong> → GND へ</li>
+    <li><div class="step-num">4</div>Rf（100kΩ）は実験1と同じく出力→−入力の間に接続したまま</li>
+  </ol>
+
+  <h3>測定・解析のポイント</h3>
+  <p>Vs（Y点）、Vout、VG を各々と GND 間でテスター測定。Vs を −1.5V〜+1.5V で 0.1V 刻みに変化させながら記録します。</p>
+  <div class="formula-label">非反転増幅の理論式</div>
+  <div class="formula">V<sub>out</sub> / V<sub>s</sub> = 1 + R<sub>f</sub> / R<sub>s</sub> = 1 + 100/10 = <strong>+11</strong></div>
+
+  <div class="info-box blue">
+    <div class="label">反転増幅との比較ポイント</div>
+    <p>① 出力の <strong>符号が正</strong> になる（Vs が正ならば Vout も正）<br>
+    ② ゲインが <strong>1 + Rf/Rs = 11倍</strong>（反転増幅の10倍より1大きい）<br>
+    ③ G点電圧は0Vではなく <strong>Y点（Vs）と等しい値</strong> になる</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- Experiment 3 -->
+<div class="section" id="exp3">
+  <span class="section-label">Section 05</span>
+  <h2 class="section-title">実験3：加算回路（アダー）</h2>
+
+  <div class="exp-header">
+    <div class="exp-icon" style="background:var(--amber-light); color:var(--amber);">➕</div>
+    <div>
+      <p style="margin:0; font-size:15px;">2つの入力電圧 V1（可変）と V2（乾電池1.5V固定）を足し合わせ、符号反転して出力します。V<sub>out</sub> = −(V1 + V2) になります。</p>
+    </div>
+  </div>
+
+  <h3>加算回路の仕組み</h3>
+  <p>2本の抵抗（R1, R2）をそれぞれ異なる電圧源に接続し、もう一端を共通のG点（OPアンプの−入力）につなぎます。G点の電位は0Vに保たれているので、各抵抗を流れる電流の合計が帰還抵抗 Rf を流れます。これにより2つの電圧が加算されます。</p>
+
+  <h3>回路図</h3>
+  <div class="circuit-wrapper">
+    <svg width="520" height="300" viewBox="0 0 520 300">
+      <!-- OPアンプ -->
+      <polygon points="280,110 280,210 380,160" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="290" y="138" font-size="14" fill="#185FA5" font-weight="600">−</text>
+      <text x="290" y="188" font-size="14" fill="#0F6E56" font-weight="600">+</text>
+
+      <!-- +12V / -12V -->
+      <line x1="315" y1="110" x2="315" y2="80" stroke="#993C1D" stroke-width="1"/>
+      <text x="315" y="72" text-anchor="middle" font-size="10" fill="#993C1D">+12V</text>
+      <line x1="315" y1="210" x2="315" y2="240" stroke="#993C1D" stroke-width="1"/>
+      <text x="315" y="254" text-anchor="middle" font-size="10" fill="#993C1D">−12V</text>
+
+      <!-- V1 path (top) via R1 -->
+      <line x1="30" y1="105" x2="75" y2="105" stroke="#444" stroke-width="1.5"/>
+      <rect x="75" y="93" width="70" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="110" y="109" text-anchor="middle" font-size="11" fill="#444">R1=100kΩ</text>
+      <line x1="145" y1="105" x2="210" y2="105" stroke="#444" stroke-width="1.5"/>
+      <!-- V1 source -->
+      <line x1="30" y1="105" x2="30" y2="145" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="145" x2="42" y2="145" stroke="#444" stroke-width="2"/>
+      <line x1="23" y1="155" x2="37" y2="155" stroke="#444" stroke-width="1.5"/>
+      <line x1="30" y1="155" x2="30" y2="185" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="185" x2="42" y2="185" stroke="#444" stroke-width="1.5"/>
+      <line x1="22" y1="191" x2="38" y2="191" stroke="#444" stroke-width="1.2"/>
+      <line x1="26" y1="197" x2="34" y2="197" stroke="#444" stroke-width="1"/>
+      <text x="44" y="162" font-size="11" fill="#444" font-weight="600">V1</text>
+      <text x="14" y="142" font-size="10" fill="#444">+</text>
+      <text x="42" y="100" font-size="10" fill="#444">X</text>
+
+      <!-- V2 path (bottom) via R2 -->
+      <line x1="30" y1="225" x2="75" y2="225" stroke="#BA7517" stroke-width="1.5"/>
+      <rect x="75" y="213" width="70" height="24" rx="4" fill="none" stroke="#BA7517" stroke-width="1.5"/>
+      <text x="110" y="229" text-anchor="middle" font-size="11" fill="#BA7517">R2=100kΩ</text>
+      <line x1="145" y1="225" x2="210" y2="225" stroke="#BA7517" stroke-width="1.5"/>
+      <line x1="210" y1="225" x2="210" y2="135" stroke="#BA7517" stroke-width="1.5"/>
+      <!-- V2 source (battery) -->
+      <line x1="30" y1="225" x2="30" y2="265" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="265" x2="42" y2="265" stroke="#444" stroke-width="2"/>
+      <line x1="23" y1="273" x2="37" y2="273" stroke="#444" stroke-width="1.5"/>
+      <line x1="30" y1="273" x2="30" y2="288" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="288" x2="42" y2="288" stroke="#444" stroke-width="1.5"/>
+      <line x1="22" y1="293" x2="38" y2="293" stroke="#444" stroke-width="1.2"/>
+      <line x1="26" y1="298" x2="34" y2="298" stroke="#444" stroke-width="1"/>
+      <text x="44" y="278" font-size="11" fill="#BA7517" font-weight="600">V2</text>
+      <text x="44" y="290" font-size="10" fill="#BA7517">1.5V乾電池</text>
+      <text x="14" y="262" font-size="10" fill="#444">+</text>
+
+      <!-- G node -->
+      <circle cx="210" cy="135" r="5" fill="#185FA5"/>
+      <text x="202" y="128" font-size="11" fill="#185FA5" font-weight="600">G</text>
+      <line x1="210" y1="135" x2="280" y2="135" stroke="#444" stroke-width="1.5"/>
+
+      <!-- Rf feedback -->
+      <line x1="210" y1="135" x2="210" y2="65" stroke="#444" stroke-width="1.5"/>
+      <line x1="210" y1="65" x2="420" y2="65" stroke="#444" stroke-width="1.5"/>
+      <rect x="275" y="53" width="80" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="315" y="69" text-anchor="middle" font-size="11" fill="#444">Rf=100kΩ</text>
+
+      <!-- + input to GND -->
+      <line x1="315" y1="185" x2="315" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="303" y1="215" x2="327" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="307" y1="221" x2="323" y2="221" stroke="#444" stroke-width="1.2"/>
+      <line x1="311" y1="227" x2="319" y2="227" stroke="#444" stroke-width="1"/>
+      <text x="315" y="237" text-anchor="middle" font-size="10" fill="#444">GND</text>
+
+      <!-- Output -->
+      <line x1="380" y1="160" x2="420" y2="160" stroke="#0F6E56" stroke-width="1.5"/>
+      <line x1="420" y1="65" x2="420" y2="160" stroke="#444" stroke-width="1.5"/>
+      <circle cx="420" cy="160" r="4" fill="#0F6E56"/>
+      <line x1="420" y1="160" x2="480" y2="160" stroke="#0F6E56" stroke-width="1.5"/>
+      <circle cx="480" cy="160" r="5" fill="none" stroke="#0F6E56" stroke-width="1.5"/>
+      <text x="492" y="164" font-size="12" fill="#0F6E56" font-weight="600">Vout</text>
+    </svg>
+    <div class="circuit-caption">図4：加算回路　V1（可変）＋ V2（乾電池1.5V）を加算して符号反転</div>
+  </div>
+
+  <h3>接続手順</h3>
+  <ol class="steps">
+    <li><div class="step-num">1</div>R1 = R2 = Rf = <strong>100kΩ</strong> とする</li>
+    <li><div class="step-num">2</div>乾電池（V2 = 1.5V）の <strong>+側</strong> → R2 → OPアンプの <strong>−入力（G点）</strong> へ</li>
+    <li><div class="step-num">3</div>乾電池の <strong>−側</strong> → GND へ</li>
+    <li><div class="step-num">4</div>可変電源の <strong>+端子</strong> → R1 → OPアンプの <strong>−入力（G点）</strong> へ（R2と同じG点！）</li>
+    <li><div class="step-num">5</div>可変電源の <strong>−端子</strong> → GND へ</li>
+    <li><div class="step-num">6</div>Rf（100kΩ）を出力 → −入力（G点）に接続（負帰還）</li>
+    <li><div class="step-num">7</div>OPアンプの <strong>+入力（ピン3）</strong> → GND へ</li>
+  </ol>
+
+  <h3>測定・解析</h3>
+  <p>V2 をテスターで実測。V1 を 0.5V 刻みで変化させながら Vout を記録。V1、V2、Vout の関係をグラフに描きます。</p>
+  <div class="formula-label">加算回路の理論式（R1 = R2 = Rf のとき）</div>
+  <div class="formula">V<sub>out</sub> = −( R<sub>f</sub>/R<sub>1</sub> × V<sub>1</sub> + R<sub>f</sub>/R<sub>2</sub> × V<sub>2</sub> ) = <strong>−( V<sub>1</sub> + V<sub>2</sub> )</strong></div>
+</div>
+
+<hr>
+
+<!-- Experiment 4 -->
+<div class="section" id="exp4">
+  <span class="section-label">Section 06</span>
+  <h2 class="section-title">実験4：理想的整流器（半波整流回路）</h2>
+
+  <div class="exp-header">
+    <div class="exp-icon" style="background:var(--coral-light); color:var(--coral);">〜</div>
+    <div>
+      <p style="margin:0; font-size:15px;">ダイオードと OPアンプを組み合わせて、通常のダイオード整流器より優れた <strong>「理想的な」整流器</strong> を作ります。入力電圧の正側だけを取り出します。</p>
+    </div>
+  </div>
+
+  <h3>なぜ「理想的」なの？</h3>
+  <p>普通のダイオードには約 <strong>0.6V の順方向電圧降下</strong> があります。つまり入力が 0.6V 以下では出力が出ません。OPアンプと組み合わせることで、この電圧降下を実質的になくし、<strong>ほぼ0Vから整流できる</strong> 理想的な動作を実現します。</p>
+
+  <h3>回路図</h3>
+  <div class="circuit-wrapper">
+    <svg width="520" height="300" viewBox="0 0 520 300">
+      <!-- OPアンプ -->
+      <polygon points="240,110 240,210 340,160" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="250" y="138" font-size="14" fill="#185FA5" font-weight="600">−</text>
+      <text x="250" y="188" font-size="14" fill="#0F6E56" font-weight="600">+</text>
+
+      <!-- VCC -->
+      <line x1="275" y1="110" x2="275" y2="82" stroke="#993C1D" stroke-width="1"/>
+      <text x="275" y="74" text-anchor="middle" font-size="10" fill="#993C1D">+12V</text>
+      <line x1="275" y1="210" x2="275" y2="238" stroke="#993C1D" stroke-width="1"/>
+      <text x="275" y="252" text-anchor="middle" font-size="10" fill="#993C1D">−12V</text>
+
+      <!-- Rs and Vs -->
+      <line x1="30" y1="135" x2="70" y2="135" stroke="#444" stroke-width="1.5"/>
+      <rect x="70" y="123" width="60" height="24" rx="4" fill="none" stroke="#444" stroke-width="1.5"/>
+      <text x="100" y="139" text-anchor="middle" font-size="11" fill="#444">Rs=100kΩ</text>
+      <line x1="130" y1="135" x2="180" y2="135" stroke="#444" stroke-width="1.5"/>
+      <!-- G node -->
+      <circle cx="180" cy="135" r="4" fill="#185FA5"/>
+      <text x="174" y="128" font-size="11" fill="#185FA5" font-weight="600">G</text>
+      <line x1="180" y1="135" x2="240" y2="135" stroke="#444" stroke-width="1.5"/>
+
+      <!-- Vs source -->
+      <line x1="30" y1="135" x2="30" y2="180" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="180" x2="42" y2="180" stroke="#444" stroke-width="2"/>
+      <line x1="23" y1="190" x2="37" y2="190" stroke="#444" stroke-width="1.5"/>
+      <text x="-2" y="178" font-size="10" fill="#444">+</text>
+      <line x1="30" y1="190" x2="30" y2="218" stroke="#444" stroke-width="1.5"/>
+      <line x1="18" y1="218" x2="42" y2="218" stroke="#444" stroke-width="1.5"/>
+      <line x1="22" y1="224" x2="38" y2="224" stroke="#444" stroke-width="1.2"/>
+      <line x1="26" y1="230" x2="34" y2="230" stroke="#444" stroke-width="1"/>
+      <text x="44" y="202" font-size="11" fill="#444" font-weight="600">Vs</text>
+      <text x="22" y="104" font-size="10" fill="#444">X</text>
+
+      <!-- + input to GND -->
+      <line x1="275" y1="185" x2="275" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="263" y1="215" x2="287" y2="215" stroke="#444" stroke-width="1.5"/>
+      <line x1="267" y1="221" x2="283" y2="221" stroke="#444" stroke-width="1.2"/>
+      <line x1="271" y1="227" x2="279" y2="227" stroke="#444" stroke-width="1"/>
+      <text x="275" y="237" text-anchor="middle" font-size="10" fill="#444">GND</text>
+
+      <!-- Output Z node -->
+      <line x1="340" y1="160" x2="370" y2="160" stroke="#444" stroke-width="1.5"/>
+      <circle cx="370" cy="160" r="4" fill="#444"/>
+      <text x="366" y="155" font-size="11" fill="#444">Z</text>
+
+      <!-- Diode D1 (forward, feedback path) -->
+      <line x1="370" y1="160" x2="390" y2="160" stroke="#444" stroke-width="1.5"/>
+      <!-- diode symbol -->
+      <polygon points="390,153 390,167 402,160" fill="#444"/>
+      <line x1="402" y1="153" x2="402" y2="167" stroke="#444" stroke-width="2"/>
+      <line x1="402" y1="160" x2="420" y2="160" stroke="#444" stroke-width="1.5"/>
+      <text x="396" y="148" font-size="9" fill="#444">D1</text>
+
+      <!-- Diode D2 (upper path to W) -->
+      <line x1="370" y1="160" x2="370" y2="90" stroke="#444" stroke-width="1.5"/>
+      <line x1="370" y1="90" x2="450" y2="90" stroke="#444" stroke-width="1.5"/>
+      <!-- diode symbol D2 -->
+      <polygon points="415,83 415,97 427,90" fill="#D85A30"/>
+      <line x1="427" y1="83" x2="427" y2="97" stroke="#D85A30" stroke-width="2"/>
+      <text x="420" y="78" font-size="9" fill="#D85A30">D2</text>
+      <line x1="427" y1="90" x2="450" y2="90" stroke="#D85A30" stroke-width="1.5"/>
+
+      <!-- Rf in feedback loop -->
+      <line x1="420" y1="160" x2="420" y2="135" stroke="#444" stroke-width="1.5"/>
+      <line x1="420" y1="135" x2="180" y2="135" stroke="#444" stroke-width="1.5"/>
+
+      <!-- W output node -->
+      <circle cx="450" cy="90" r="4" fill="#D85A30"/>
+      <line x1="450" y1="90" x2="480" y2="90" stroke="#D85A30" stroke-width="1.5"/>
+      <circle cx="480" cy="90" r="5" fill="none" stroke="#D85A30" stroke-width="1.5"/>
+      <text x="492" y="94" font-size="12" fill="#D85A30" font-weight="600">W</text>
+      <text x="490" y="106" font-size="10" fill="#D85A30">（測定点）</text>
+
+      <!-- Rf label -->
+      <text x="300" y="128" font-size="10" fill="#444">Rf=100kΩ</text>
+
+      <!-- Highlight red box for diode board -->
+      <rect x="358" y="75" width="105" height="100" rx="6" fill="none" stroke="#D85A30" stroke-width="1" stroke-dasharray="5 4"/>
+      <text x="410" y="188" text-anchor="middle" font-size="9" fill="#D85A30">専用基板（ダイオード2個）</text>
+    </svg>
+    <div class="circuit-caption">図5：理想的整流器　出力は W点の電圧 Vw を測定する（Z点ではない！）</div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠ 注意：</strong>出力の測定点は <strong>Z点（ピン6）ではなく W点</strong> です。ダイオードが2個乗った専用の小基板を使って赤枠部分を配線します。
+  </div>
+
+  <h3>接続手順</h3>
+  <ol class="steps">
+    <li><div class="step-num">1</div>可変電源の <strong>+端子</strong> → Rs（100kΩ）→ OPアンプの <strong>−入力（G点）</strong> へ</li>
+    <li><div class="step-num">2</div>可変電源の <strong>−端子</strong> → GND へ</li>
+    <li><div class="step-num">3</div>OPアンプの <strong>+入力（ピン3）</strong> → GND へ</li>
+    <li><div class="step-num">4</div>ダイオード2個搭載の <strong>専用基板</strong> を用いて出力−入力間を接続（教科書図14参照）</li>
+    <li><div class="step-num">5</div>Rs = Rf = <strong>100kΩ</strong> とする</li>
+  </ol>
+
+  <h3>測定・解析</h3>
+  <p>Vs と GND の間、<strong>Vw（W点）</strong> と GND の間にテスターを接続。Vs を −1.5V〜+1.5V で 0.1V 刻みに変化させ、Vw を記録します。</p>
+
+  <div class="info-box coral">
+    <div class="label">考察のポイント</div>
+    <p>① <strong>Vs &gt; 0 のとき</strong>：D2 が導通し W点に電圧が出る（Vw ≈ −Vs）<br>
+    ② <strong>Vs &lt; 0 のとき</strong>：D2 が逆バイアスとなり W点 ≈ 0V<br>
+    ③ 各点（G, Z, W）の電圧の正負と電流の向きを考察すること<br>
+    ④ 普通のダイオード整流と比べ、ほぼ 0V から整流できることを確認</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- Week 2 -->
+<div class="section" id="week2">
+  <span class="section-label">Section 07</span>
+  <h2 class="section-title">2週目：交流回路（半波・全波整流）</h2>
+
+  <div class="info-box blue">
+    <div class="label">2週目の目標</div>
+    <p>交流入力（ファンクションジェネレーター）を使い、半波整流・全波整流回路の入出力波形をオシロスコープで観察して、回路特性を評価します。</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-top:0; color:var(--blue)">半波整流回路</h3>
+      <p style="font-size:14px">1週目の実験4（理想整流器）と同じ回路に交流を入力。正の半波のみが出力に現れる波形をオシロスコープで確認します。</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0; color:var(--teal)">全波整流回路</h3>
+      <p style="font-size:14px">半波整流回路 ＋ 加算回路を組み合わせて全波整流を実現。交流の正側・負側どちらも同符号に変換されることを確認します。</p>
+    </div>
+  </div>
+
+  <h3>使用機器の設定</h3>
+  <table>
+    <thead><tr><th>機器</th><th>役割</th><th>接続先</th></tr></thead>
+    <tbody>
+      <tr><td>ファンクションジェネレーター</td><td>交流（正弦波）の入力信号発生</td><td>回路の入力（Vs）端子へ</td></tr>
+      <tr><td>オシロスコープ CH1</td><td>入力波形モニター</td><td>X点（入力）</td></tr>
+      <tr><td>オシロスコープ CH2</td><td>出力波形モニター</td><td>W点（出力）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>片付け場所（2週目終了後）</h3>
+  <ul class="steps" style="list-style:none;">
+    <li><div class="step-num">→</div>オシロスコープ・プローブ → <strong>K1ロッカー</strong> へ返却</li>
+    <li><div class="step-num">→</div>ファンクションジェネレーター → <strong>棚の上段</strong> へ収納</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- Cleanup -->
+<div class="section" id="cleanup">
+  <span class="section-label">Section 08</span>
+  <h2 class="section-title">実験終了後の片付け</h2>
+
+  <div class="warning">
+    <strong>⚠ 基板の扱いに注意：</strong>基板を重ねたり、無理に押し込むと素子が外れて修理が必要になります。<strong>写真のように丁寧に収納</strong> してください。
+  </div>
+
+  <table>
+    <thead><tr><th>片付けるもの</th><th>収納場所</th></tr></thead>
+    <tbody>
+      <tr><td>回路基板（整流器・電源等）</td><td>回路素子ボックスに重ならないよう丁寧に収納 → <strong>棚の上段・中段</strong></td></tr>
+      <tr><td>各種抵抗・コンデンサ等の袋</td><td>回路素子ボックスへ → <strong>棚の上段・中段</strong></td></tr>
+      <tr><td>電池（乾電池）</td><td>回路素子ボックスへ → <strong>棚の上段・中段</strong></td></tr>
+      <tr><td>OPアンプ駆動用電源</td><td>回路素子ボックスへ → <strong>棚の上段・中段</strong></td></tr>
+      <tr><td>オシロスコープ・プローブ</td><td><strong>K1ロッカー</strong> へ返却</td></tr>
+      <tr><td>ファンクションジェネレーター</td><td><strong>棚の上段</strong> へ収納</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; padding: 2rem 0 1rem; color:var(--text-muted); font-size:13px; border-top: 0.5px solid var(--border); margin-top: 2rem;">
+  物理学実験 — 応用編　OPアンプ実験ガイド　LM301A使用
+</div>
+
+</body>
+</html>
